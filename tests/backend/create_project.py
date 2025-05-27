@@ -1,7 +1,6 @@
 import requests
 import pytest
 
-BASE_URL = "http://admin:admin@localhost:8111"
 
 class TestProjectCreate:
 
