@@ -1,10 +1,19 @@
 import requests
 import pytest
+from enums.host import BASE_URL
+from custom_requester.custom_requster import CustomRequester
+from data.project_data import ProjectData
 
 
 class TestProjectCreate:
 
+    @classmethod
+    def setup_class(cls):
+        cls.project_data = ProjectData.create_project_data()
+        cls.project_id = cls.project_data['id']
+
     def test_project_create(self):
+        requester = CustomRequester(requests.Session())
 
         # Get token
         auth_response = requests.get(url=f'{BASE_URL}/authenticationTest.html?csrf', auth=('admin', 'admin'))
