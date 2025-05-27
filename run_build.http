@@ -1,0 +1,87 @@
+### Get build conf
+GET http://admin:admin@localhost:8111/app/rest/buildTypes/id:SpringCoreForQa_Build
+Accept: application/json
+
+
+### Get project
+GET http://admin:admin@localhost:8111/app/rest/projects
+Accept: application/json
+
+
+### 0. Get CSRF
+GET http://localhost:8111/authenticationTest.html?csrf
+Accept: application/json
+
+
+### 1. Create project
+POST http://admin:admin@localhost:8111/app/rest/projects
+Content-Type: application/json
+Accept: application/json
+X-TC-CSRF-Token: cfcc01f3-6182-4354-a041-aaf37ad9d65a
+
+{
+    "parentProject": {
+        "locator": "_Root"
+    },
+    "name": "ProjectName",
+    "id": "idID",
+    "copyAllAssociatedSettings": true
+}
+
+
+### 2. Create build config
+POST http://admin:admin@localhost:8111/app/rest/buildTypes
+Content-Type: application/json
+Accept: application/json
+X-TC-CSRF-Token: cfcc01f3-6182-4354-a041-aaf37ad9d65a
+
+{
+    "id": "BuildConfId",
+    "name": "BuildConfName",
+    "project": {
+        "id": "idID"
+    },
+    "steps": {
+        "step": [
+            {
+                "name": "myCommandLineStep",
+                "type": "simpleRunner",
+                "properties": {
+                    "property": [
+                        {
+                            "name": "script.content",
+                            "value": "echo 'Hello World!'"
+                        },
+                        {
+                            "name": "teamcity.step.mode",
+                            "value": "default"
+                        },
+                        {
+                            "name": "use.custom.script",
+                            "value": "true"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
+
+
+### 3. Run build
+POST http://admin:admin@localhost:8111/app/rest/buildQueue
+Content-Type: application/json
+Accept: application/json
+X-TC-CSRF-Token: cfcc01f3-6182-4354-a041-aaf37ad9d65a
+
+{
+	"buildType": {
+    	"id": "BuildConfId"
+	}
+}
+
+
+### 4. Chek build status
+GET http://admin:admin@localhost:8111/app/rest/buildQueue?locator=buildType(id:BuildConfId)
+Content-Type: application/json
+Accept: application/json
