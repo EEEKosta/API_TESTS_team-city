@@ -12,26 +12,17 @@ class TestProjectCreate:
         cls.project_data = ProjectData.create_project_data()
         cls.project_id = cls.project_data['id']
 
+
     def test_project_create(self):
         requester = CustomRequester(requests.Session())
+        requester.session.auth = ("admin", "admin")
 
         # Get token
-        auth_response = requests.get(url=f'{BASE_URL}/authenticationTest.html?csrf', auth=('admin', 'admin'))
-        csrf_token = auth_response.text
-        headers = {'X-TC-CSRF-Token': csrf_token}
-
-        # Set data
-        project_id = 'simpleprojectID2'
-        project_data = {
-                        "parentProject": {
-                                            "locator": "_Root"
-                                         },
-                        "name": "ProjectNameSimple2",
-                        "id": project_id
-                        }
+        csrf_token = requester.send_request('GET', '/authenticationTest.html?csrf').text
+        requester._update_session_headers(**({'X-TC-CSRF-Token': csrf_token}))
 
         # Create project
-        create_response = requests.post(url=f'{BASE_URL}/app/rest/projects', headers=headers, json=project_data)
+        create_response = requester.send_request('POST', '/app/rest/projects', data=self.project_data)
         assert create_response.status_code == 200, 'Не удалось создать проект'
 
         # Check create project
