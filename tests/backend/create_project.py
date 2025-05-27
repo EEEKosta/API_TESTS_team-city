@@ -1,5 +1,4 @@
 import requests
-import pytest
 from custom_requester.custom_requster import CustomRequester
 from data.project_data import ProjectData
 
