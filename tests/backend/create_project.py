@@ -1,11 +1,11 @@
 import requests
 import pytest
-from enums.host import BASE_URL
 from custom_requester.custom_requster import CustomRequester
 from data.project_data import ProjectData
 
 
 class TestProjectCreate:
+    project_data = None
 
     @classmethod
     def setup_class(cls):
@@ -26,9 +26,9 @@ class TestProjectCreate:
         assert create_response.status_code == 200, 'Не удалось создать проект'
 
         # Check create project
-        chek_project = requests.get(url=f'{BASE_URL}/app/rest/projects/id:{project_id}', headers=headers)
-        assert chek_project.status_code == 200, 'Проект не найден'
+        check_project = requester.send_request('GET', f'/app/rest/projects/{self.project_id}')
+        assert check_project.status_code == 200, 'Проект не найден'
 
         # Delete project
-        delete_project = requests.delete(url=f'{BASE_URL}/app/rest/projects/id:{project_id}', headers=headers)
+        delete_project = requester.send_request('DELETE', '/app/rest/projects/' + self.project_id, expected_status=204)
         assert delete_project.status_code == 204, 'Не удалось удалить проект'
