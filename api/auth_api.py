@@ -1,7 +1,7 @@
 from custom_requester.custom_requster import CustomRequester
 
 
-class AurhAPI(CustomRequester):
+class AuthAPI(CustomRequester):
     def __init__(self, session):
         super().__init__(session)
         self.session = session
