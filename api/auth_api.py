@@ -10,6 +10,7 @@ class AuthAPI(CustomRequester):
     def auth_and_get_csrf(self):
         self.session.auth = ("admin", "admin")
         csrf_token = self.send_request('GET', '/authenticationTest.html?csrf').text
+        print(csrf_token)
         if not csrf_token:
-            raise ValueError("CSRF token is missing")
+            raise ValueError(f'CSRF token is missing or invalid {csrf_token}')
         self._update_session_headers(**{'X-CSRFToken': csrf_token})

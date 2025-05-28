@@ -1,7 +1,4 @@
-import requests
-from custom_requester.custom_requster import CustomRequester
 from data.project_data import ProjectData
-
 
 class TestProjectCreate:
     project_data = None
@@ -12,22 +9,13 @@ class TestProjectCreate:
         cls.project_id = cls.project_data['id']
 
 
-    def test_project_create(self):
-        requester = CustomRequester(requests.Session())
-        requester.session.auth = ("admin", "admin")
+    def test_project_create(self, api_manager):
 
-        # Get token
-        csrf_token = requester.send_request('GET', '/authenticationTest.html?csrf').text
-        requester._update_session_headers(**({'X-TC-CSRF-Token': csrf_token}))
+        create_project_response = api_manager.project_api.create_project(self.project_data).json()
+        assert create_project_response.get('id', {}) == self.create_project_id
 
-        # Create project
-        create_response = requester.send_request('POST', '/app/rest/projects', data=self.project_data)
-        assert create_response.status_code == 200, 'Не удалось создать проект'
+        get_project_response = api_manager.project_api.get_project.json()
+        project_ids = [project.get('id', {}) for project in get_project_response.get('project', [])]
+        assert self.create_project_id in project_ids
 
-        # Check create project
-        check_project = requester.send_request('GET', f'/app/rest/projects/{self.project_id}')
-        assert check_project.status_code == 200, 'Проект не найден'
-
-        # Delete project
-        delete_project = requester.send_request('DELETE', '/app/rest/projects/' + self.project_id, expected_status=204)
-        assert delete_project.status_code == 204, 'Не удалось удалить проект'
+        api_manager.project_api.delete_project(self.create_project_id)

@@ -17,11 +17,11 @@ class ProjectAPI(CustomRequester):
 
 
     def delete_project(self, project_id, expected_status_code=HTTPStatus.NO_CONTENT):
-        return self.send_request('DELETE', f'/app/rest/projects/{project_id}', expected_status=expected_status_code)
+        return self.send_request('DELETE', f'/app/rest/projects/id:{project_id}', expected_status=expected_status_code)
 
 
-    def clean_up_project(self, fake_project_id, expected_status_code=HTTPStatus.NO_CONTENT):
-        self.delete_project(fake_project_id)
+    def clean_up_project(self, created_project_id):
+        self.delete_project(created_project_id)
         get_project_response = self.get_project().json()
-        project_id = [project.get('id') for project in get_project_response.get('project', [])]
-        assert fake_project_id not in project_id, 'ID созданного проекта найден в списке проектов после удаления'
+        project_ids = [project.get('id') for project in get_project_response.get('project', [])]
+        assert created_project_id not in project_ids, 'ID созданного проекта найден в списке проектов после удаления'
