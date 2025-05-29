@@ -1,5 +1,5 @@
-from api.project_api import ProjectAPI
 from api.auth_api import AuthAPI
+from api.project_api import ProjectAPI
 
 
 class ApiManager:

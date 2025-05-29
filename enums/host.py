@@ -1,1 +1,1 @@
-BASE_URL = "http://admin:admin@localhost:8111"
+BASE_URL = 'http://localhost:8111'
